@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Resume Score — {{ resume.full_name }}</title>
+
+    <style>
+        /* ─────────────────────────────────────────────
+           GLOBAL STYLES
+           ───────────────────────────────────────────── */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+
+
+        /* ─────────────────────────────────────────────
+           NAVIGATION
+           ───────────────────────────────────────────── */
+
+        .nav {
+            background: rgba(255,255,255,0.95);
+            padding: 16px 40px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+        }
+
+        .nav-logo {
+            color: #667eea;
+            font-size: 22px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .nav-logo span {
+            color: #f093fb;
+        }
+
+        .nav-btn {
+            padding: 10px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            background: #667eea;
+            color: white;
+        }
+
+
+        /* ─────────────────────────────────────────────
+           MAIN CONTAINER
+           ───────────────────────────────────────────── */
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+
+        /* ─────────────────────────────────────────────
+           PAGE HEADER
+           ───────────────────────────────────────────── */
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 6px;
+        }
+
+
+        /* ─────────────────────────────────────────────
+           SCORE BANNER
+           ───────────────────────────────────────────── */
+
+        .score-banner {
+            background: white;
+            border-radius: 14px;
+            padding: 32px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+            margin-bottom: 30px;
+        }
+
+        .score-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 24px;
+        }
+
+        .score-display h2 {
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 6px;
+        }
+
+        .score-display .number {
+            font-size: 56px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .score-display .max {
+            font-size: 18px;
+            color: #ccc;
+            margin-left: 4px;
+        }
+
+        .improve-msg {
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .improve-msg h3 {
+            color: #27ae60;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .improve-msg p {
+            color: #666;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+
+        /* ─────────────────────────────────────────────
+           OVERALL PROGRESS BAR
+           ───────────────────────────────────────────── */
+
+        .progress-overall {
+            background: #e8e8e8;
+            border-radius: 10px;
+            height: 12px;
+            margin-top: 12px;
+            overflow: hidden;
+        }
+
+        .progress-overall-fill {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #f093fb 0%, #667eea 100%);
+            border-radius: 10px;
+            transition: width 0.6s ease;
+        }
+
+
+        /* ─────────────────────────────────────────────
+           CHECKPOINTS GRID
+           ───────────────────────────────────────────── */
+
+        .checkpoints-title {
+            color: white;
+            font-size: 18px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        /* Increased gap from 18px to 24px */
+        .checkpoints-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+
+        /* ─────────────────────────────────────────────
+           CHECKPOINT CARD
+           ───────────────────────────────────────────── */
+
+        /* Increased padding from 20px to 24px */
+        .checkpoint {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            border-left: 5px solid #ccc;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .checkpoint:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.15);
+        }
+
+        .checkpoint.good {
+            border-left-color: #27ae60;
+        }
+
+        .checkpoint.in-progress {
+            border-left-color: #f39c12;
+        }
+
+        .checkpoint.needs-work {
+            border-left-color: #e74c3c;
+        }
+
+
+        /* ─────────────────────────────────────────────
+           CHECKPOINT HEADER
+           ───────────────────────────────────────────── */
+
+        .checkpoint-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .checkpoint-name {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .checkpoint-icon {
+            font-size: 24px;
+        }
+
+
+        /* ─────────────────────────────────────────────
+           CHECKPOINT SCORE
+           ───────────────────────────────────────────── */
+
+        .checkpoint-score {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .checkpoint-score.good {
+            color: #27ae60;
+        }
+
+        .checkpoint-score.in-progress {
+            color: #f39c12;
+        }
+
+        .checkpoint-score.needs-work {
+            color: #e74c3c;
+        }
+
+
+        /* ─────────────────────────────────────────────
+           CHECKPOINT FEEDBACK
+           ───────────────────────────────────────────── */
+
+        /* Better line spacing and additional bottom space */
+        .checkpoint-feedback {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+
+        /* ─────────────────────────────────────────────
+           CHECKPOINT TIP
+           ───────────────────────────────────────────── */
+
+        /* Increased padding from 8px to 12px */
+        .checkpoint-tip {
+            background: #f8f9fa;
+            border-left: 3px solid #667eea;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #555;
+            line-height: 1.5;
+        }
+
+
+        /* ─────────────────────────────────────────────
+           STATUS BADGES
+           ───────────────────────────────────────────── */
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .status-badge.good {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-badge.in-progress {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-badge.needs-work {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+
+        /* ─────────────────────────────────────────────
+           SUMMARY / NEXT STEPS
+           ───────────────────────────────────────────── */
+
+        /* Increased padding from 24px to 28px */
+        .summary-stats {
+            background: white;
+            border-radius: 12px;
+            padding: 28px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+
+        /* Increased heading size from 15px to 16px */
+        .summary-stats h3 {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+
+        /* ─────────────────────────────────────────────
+           CTA BUTTONS
+           ───────────────────────────────────────────── */
+
+        .cta-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .btn-blue {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .btn-blue:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102,126,234,0.3);
+        }
+
+        .btn-green {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+        }
+
+        .btn-green:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(39,174,96,0.3);
+        }
+
+
+        /* ─────────────────────────────────────────────
+           RESPONSIVE DESIGN
+           ───────────────────────────────────────────── */
+
+        @media (max-width: 768px) {
+
+            body {
+                padding: 20px 12px;
+            }
+
+            .nav {
+                padding: 14px 20px;
+            }
+
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .score-banner {
+                padding: 24px;
+            }
+
+            .score-display .number {
+                font-size: 46px;
+            }
+
+            .checkpoints-grid {
+                grid-template-columns: 1fr;
+                gap: 18px;
+            }
+
+            .checkpoint {
+                padding: 20px;
+            }
+
+            .cta-row {
+                flex-direction: column;
+            }
+
+            .btn {
+                text-align: center;
+                width: 100%;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- ─────────────────────────────────────────────
+         NAVIGATION
+         ───────────────────────────────────────────── -->
+
+    <div class="nav">
+
+        <a href="{% url 'home' %}" class="nav-logo">
+            My<span>Resume</span>Builder
+        </a>
+
+        <a href="{% url 'resume_form' %}" class="nav-btn">
+            ← Build New
+        </a>
+
+    </div>
+
+
+    <!-- ─────────────────────────────────────────────
+         MAIN CONTAINER
+         ───────────────────────────────────────────── -->
+
+    <div class="container">
+
+
+        <!-- ─────────────────────────────────────────────
+             PAGE HEADER
+             ───────────────────────────────────────────── -->
+
+        <div class="header">
+
+            <h1>
+                Resume Score Report
+            </h1>
+
+            <p>
+                {{ resume.full_name }}
+
+                {% if resume.target_position %}
+                    • {{ resume.target_position }}
+                {% endif %}
+            </p>
+
+        </div>
+
+
+        <!-- ─────────────────────────────────────────────
+             SCORE BANNER
+             ───────────────────────────────────────────── -->
+
+        <div class="score-banner">
+
+            <div class="score-row">
+
+                <div class="score-display">
+
+                    <h2>
+                        Your Score
+                    </h2>
+
+                    <div>
+
+                        <span class="number">
+                            {{ total_score }}
+                        </span>
+
+                        <span class="max">
+                            /{{ max_score }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="improve-msg">
+
+                    {% if percentage >= 85 %}
+
+                        <h3
+                            style="color: #27ae60; margin-bottom: 8px;"
+                        >
+                            ✓ Excellent Work!
+                        </h3>
+
+                    {% elif percentage >= 70 %}
+
+                        <h3
+                            style="color: #27ae60; margin-bottom: 8px;"
+                        >
+                            ✓ On Track!
+                        </h3>
+
+                    {% else %}
+
+                        <h3
+                            style="color: #f39c12; margin-bottom: 8px;"
+                        >
+                            ⚠️ Needs Improvement
+                        </h3>
+
+                    {% endif %}
+
+
+                    <p>
+
+                        {{ percentage }}% match.
+
+                        {% if percentage < 100 %}
+
+                            <strong>
+                                {{ max_score|add:"-"|add:total_score }}
+                                points to excellent status.
+                            </strong>
+
+                        {% else %}
+
+                            Perfect score! You're ready to apply.
+
+                        {% endif %}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!--
+                IMPORTANT:
+                Do not put {{ percentage }} directly into
+                a CSS style attribute.
+
+                VS Code's CSS validator interprets the
+                Django template syntax as invalid CSS.
+
+                Instead, percentage is stored in the
+                data-percentage HTML attribute and JavaScript
+                applies it to the progress bar.
+            -->
+
+            <div class="progress-overall">
+
+                <div
+                    id="progressBar"
+                    class="progress-overall-fill"
+                    data-percentage="{{ percentage }}"
+                ></div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ─────────────────────────────────────────────
+             8-POINT RESUME EVALUATION
+             ───────────────────────────────────────────── -->
+
+        <h2 class="checkpoints-title">
+            8-Point Resume Evaluation
+        </h2>
+
+
+        <div class="checkpoints-grid">
+
+            {% for checkpoint in checkpoints %}
+
+                <div class="checkpoint {{ checkpoint.status }}">
+
+                    <div class="checkpoint-header">
+
+                        <div>
+
+                            <div class="checkpoint-name">
+                                {{ checkpoint.icon }}
+                                {{ checkpoint.name }}
+                            </div>
+
+                            <div
+                                class="status-badge {{ checkpoint.status }}"
+                                style="margin-top: 6px;"
+                            >
+
+                                {% if checkpoint.status == 'good' %}
+
+                                    ✓ Strong
+
+                                {% elif checkpoint.status == 'in-progress' %}
+
+                                    ⚠ Work On
+
+                                {% else %}
+
+                                    ✕ Needs Help
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Individual checkpoint score -->
+
+                    <div
+                        class="checkpoint-score {{ checkpoint.status }}"
+                        style="margin-top: 8px;"
+                    >
+
+                        {{ checkpoint.score }}
+
+                        <span
+                            style="font-size:14px; color:#ccc;"
+                        >
+                            / {{ checkpoint.max }}
+                        </span>
+
+                    </div>
+
+
+                    <!-- Checkpoint feedback -->
+
+                    <p
+                        class="checkpoint-feedback"
+                        style="margin-top: 8px;"
+                    >
+                        {{ checkpoint.feedback }}
+                    </p>
+
+
+                    <!-- Checkpoint improvement tip -->
+
+                    <div
+                        class="checkpoint-tip"
+                        style="margin-top: 8px;"
+                    >
+                        💡 {{ checkpoint.tip }}
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+
+        <!-- ─────────────────────────────────────────────
+             NEXT STEPS
+             ───────────────────────────────────────────── -->
+
+        <div
+            class="summary-stats"
+            style="margin-top: 20px;"
+        >
+
+            <h3>
+                Next Steps
+            </h3>
+
+            <p
+                style="
+                    color: #666;
+                    line-height: 1.6;
+                    margin-top: 8px;
+                "
+            >
+                Focus on the areas marked
+                "⚠ Work On" and "✕ Needs Help" to improve
+                your score.
+
+                Each checkpoint shows specific tips to
+                strengthen that section of your resume.
+            </p>
+
+        </div>
+
+
+        <!-- ─────────────────────────────────────────────
+             ACTION BUTTONS
+             ───────────────────────────────────────────── -->
+
+        <div
+            class="cta-row"
+            style="margin-top: 20px;"
+        >
+
+            <a
+                href="{% url 'resume_display' resume.pk %}"
+                class="btn btn-blue"
+            >
+                📄 View Resume
+            </a>
+
+            <a
+                href="{% url 'download_docx' resume.pk %}"
+                class="btn btn-blue"
+            >
+                ⬇️ Download DOCX
+            </a>
+
+            <a
+                href="{% url 'resume_form' %}"
+                class="btn btn-green"
+            >
+                ✏️ Edit & Improve
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- ─────────────────────────────────────────────
+         PROGRESS BAR JAVASCRIPT
+         ───────────────────────────────────────────── -->
+
+    <script>
+        /*
+            Read the percentage from the HTML data attribute
+            and apply it to the progress bar.
+
+            This avoids putting Django's {{ percentage }}
+            directly inside CSS, which causes VS Code's
+            CSS validator errors.
+        */
+
+        const progressBar = document.getElementById('progressBar');
+
+        if (progressBar) {
+
+            const percentage = progressBar.dataset.percentage;
+
+            progressBar.style.width = percentage + '%';
+        }
+    </script>
+
+</body>
+</html>

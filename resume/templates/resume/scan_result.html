@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+
+<html lang="en"> <head>     
+<meta charset="UTF-8">    
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Resume Scan Results — MyResumeBuilder</title>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        background: linear-gradient(
+            135deg,
+            #667eea 0%,
+            #764ba2 100%
+        );
+        min-height: 100vh;
+        padding: 30px 20px;
+    }
+
+    .nav {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 16px 40px;
+        border-radius: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-logo {
+        color: #667eea;
+        font-size: 22px;
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+    .nav-logo span {
+        color: #f093fb;
+    }
+
+    .nav-btn {
+        padding: 10px 24px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: bold;
+        background: #667eea;
+        color: white;
+    }
+
+    .nav-btn:hover {
+        background: #5568d9;
+    }
+
+    .container {
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+
+    .header {
+        text-align: center;
+        color: white;
+        margin-bottom: 30px;
+    }
+
+    .header h1 {
+        font-size: 36px;
+        margin-bottom: 6px;
+    }
+
+    .header p {
+        font-size: 15px;
+        opacity: 0.95;
+    }
+
+    .score-banner {
+        background: white;
+        border-radius: 14px;
+        padding: 32px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        margin-bottom: 30px;
+    }
+
+    .score-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 24px;
+    }
+
+    .score-display h2 {
+        font-size: 13px;
+        color: #999;
+        margin-bottom: 6px;
+    }
+
+    .score-display .number {
+        font-size: 56px;
+        font-weight: bold;
+        color: #667eea;
+    }
+
+    .score-display .max {
+        font-size: 18px;
+        color: #ccc;
+        margin-left: 4px;
+    }
+
+    .improve-msg {
+        flex: 1;
+        min-width: 250px;
+    }
+
+    .improve-msg h3 {
+        font-size: 16px;
+        margin-bottom: 8px;
+    }
+
+    .improve-msg p {
+        color: #666;
+        line-height: 1.6;
+        font-size: 14px;
+    }
+
+    .progress-overall {
+        background: #e8e8e8;
+        border-radius: 10px;
+        height: 12px;
+        margin-top: 20px;
+        overflow: hidden;
+    }
+
+    .progress-overall-fill {
+        height: 100%;
+        width: 0;
+        background: linear-gradient(
+            90deg,
+            #f093fb 0%,
+            #667eea 100%
+        );
+        border-radius: 10px;
+        transition: width 0.8s ease;
+    }
+
+    .checkpoints-title {
+        color: white;
+        font-size: 18px;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+
+    .checkpoints-grid {
+        display: grid;
+        grid-template-columns: repeat(
+            auto-fit,
+            minmax(260px, 1fr)
+        );
+        gap: 24px;
+        margin-bottom: 30px;
+    }
+
+    .checkpoint {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        border-left: 5px solid #ccc;
+        transition:
+            transform 0.3s,
+            box-shadow 0.3s;
+    }
+
+    .checkpoint:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+    }
+
+    .checkpoint.good {
+        border-left-color: #27ae60;
+    }
+
+    .checkpoint.in-progress {
+        border-left-color: #f39c12;
+    }
+
+    .checkpoint.needs-work {
+        border-left-color: #e74c3c;
+    }
+
+    .checkpoint-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+
+    .checkpoint-name {
+        font-size: 14px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .checkpoint-score {
+        font-size: 22px;
+        font-weight: bold;
+        margin-bottom: 12px;
+        margin-top: 8px;
+    }
+
+    .checkpoint-score.good {
+        color: #27ae60;
+    }
+
+    .checkpoint-score.in-progress {
+        color: #f39c12;
+    }
+
+    .checkpoint-score.needs-work {
+        color: #e74c3c;
+    }
+
+    .checkpoint-score .score-max {
+        font-size: 14px;
+        color: #ccc;
+    }
+
+    .checkpoint-feedback {
+        font-size: 13px;
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 12px;
+    }
+
+    .checkpoint-tip {
+        background: #f8f9fa;
+        border-left: 3px solid #667eea;
+        padding: 12px;
+        border-radius: 4px;
+        font-size: 12px;
+        color: #555;
+        font-style: italic;
+        line-height: 1.5;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-top: 6px;
+    }
+
+    .status-badge.good {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .status-badge.in-progress {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .status-badge.needs-work {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .summary-stats {
+        background: white;
+        border-radius: 12px;
+        padding: 28px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        margin-bottom: 30px;
+    }
+
+    .summary-stats h3 {
+        font-size: 16px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 12px;
+    }
+
+    .summary-stats p {
+        color: #666;
+        line-height: 1.6;
+        font-size: 14px;
+    }
+
+    .red-text {
+        color: #e74c3c;
+        font-weight: bold;
+    }
+
+    .yellow-text {
+        color: #f39c12;
+        font-weight: bold;
+    }
+
+    .cta-row {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 30px;
+    }
+
+    .btn {
+        padding: 12px 28px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: bold;
+        color: white;
+        transition: all 0.3s;
+    }
+
+    .btn-blue {
+        background: linear-gradient(
+            135deg,
+            #667eea 0%,
+            #764ba2 100%
+        );
+    }
+
+    .btn-blue:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(
+            102,
+            126,
+            234,
+            0.3
+        );
+    }
+
+    .btn-green {
+        background: linear-gradient(
+            135deg,
+            #27ae60 0%,
+            #229954 100%
+        );
+    }
+
+    .btn-green:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(
+            39,
+            174,
+            96,
+            0.3
+        );
+    }
+
+    @media (max-width: 768px) {
+
+        body {
+            padding: 20px 12px;
+        }
+
+        .nav {
+            padding: 14px 20px;
+        }
+
+        .nav-logo {
+            font-size: 18px;
+        }
+
+        .nav-btn {
+            padding: 9px 15px;
+            font-size: 12px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+        }
+
+        .score-banner {
+            padding: 24px;
+        }
+
+        .score-display .number {
+            font-size: 46px;
+        }
+
+        .checkpoints-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .cta-row {
+            flex-direction: column;
+        }
+
+        .btn {
+            text-align: center;
+            width: 100%;
+        }
+    }
+</style>
+
+</head>
+
+<body>
+
+<!-- Navigation -->
+<div class="nav">
+
+    <a
+        href="{% url 'home' %}"
+        class="nav-logo"
+    >
+        My<span>Resume</span>Builder
+    </a>
+
+    <a
+        href="{% url 'resume_form' %}"
+        class="nav-btn"
+    >
+        ← Build New
+    </a>
+
+</div>
+
+
+<div class="container">
+
+    <!-- Header -->
+    <div class="header">
+
+        <h1>
+            Resume Scan Results
+        </h1>
+
+        <p>
+            Analysis of your uploaded resume
+        </p>
+
+    </div>
+
+
+    <!-- Score Banner -->
+    <div class="score-banner">
+
+        <div class="score-row">
+
+            <div class="score-display">
+
+                <h2>
+                    Your Score
+                </h2>
+
+                <div>
+
+                    <span class="number">
+                        {{ total_score }}
+                    </span>
+
+                    <span class="max">
+                        /{{ max_score }}
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="improve-msg">
+
+                {% if percentage >= 85 %}
+
+                    <h3 style="color: #27ae60;">
+                        ✓ Excellent Work!
+                    </h3>
+
+                    <p>
+                        Your resume has strong coverage across
+                        the evaluated areas. Review the individual
+                        checkpoints below for any remaining improvements.
+                    </p>
+
+                {% elif percentage >= 70 %}
+
+                    <h3 style="color: #27ae60;">
+                        ✓ On Track!
+                    </h3>
+
+                    <p>
+                        You have a solid foundation. Focus on the
+                        checkpoints below that are marked as
+                        in-progress or needs-work.
+                    </p>
+
+                {% elif percentage >= 50 %}
+
+                    <h3 style="color: #f39c12;">
+                        ⚠️ Needs Work
+                    </h3>
+
+                    <p>
+                        You can improve your resume by addressing
+                        the suggestions below. Start with the areas
+                        marked as needs-work.
+                    </p>
+
+                {% else %}
+
+                    <h3 style="color: #e74c3c;">
+                        ⚠️ Start Here
+                    </h3>
+
+                    <p>
+                        Several key areas need attention.
+                        Work through the needs-work items below
+                        and strengthen your resume step by step.
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <!-- Overall progress -->
+        <div class="progress-overall">
+
+            <div
+                class="progress-overall-fill"
+                data-progress="{{ percentage }}"
+            ></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- 8 Checkpoints -->
+    <h2 class="checkpoints-title">
+        8-Point Resume Evaluation
+    </h2>
+
+
+    <div class="checkpoints-grid">
+
+        {% for checkpoint in checkpoints %}
+
+            <div class="checkpoint {{ checkpoint.status }}">
+
+                <div class="checkpoint-header">
+
+                    <div>
+
+                        <div class="checkpoint-name">
+                            {{ checkpoint.icon }}
+                            {{ checkpoint.name }}
+                        </div>
+
+
+                        <div class="status-badge {{ checkpoint.status }}">
+
+                            {% if checkpoint.status == 'good' %}
+
+                                ✓ Good
+
+                            {% elif checkpoint.status == 'in-progress' %}
+
+                                ⊙ In Progress
+
+                            {% else %}
+
+                                ✕ Needs Work
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="checkpoint-score {{ checkpoint.status }}">
+
+                    {{ checkpoint.score }}
+
+                    <span class="score-max">
+                        / {{ checkpoint.max }}
+                    </span>
+
+                </div>
+
+
+                <p class="checkpoint-feedback">
+                    {{ checkpoint.feedback }}
+                </p>
+
+
+                <div class="checkpoint-tip">
+                    💡 {{ checkpoint.tip }}
+                </div>
+
+            </div>
+
+        {% empty %}
+
+            <div class="checkpoint needs-work">
+
+                <div class="checkpoint-name">
+                    No checkpoint results available.
+                </div>
+
+                <p class="checkpoint-feedback">
+                    We could not find any scoring information
+                    for this resume.
+                </p>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+
+    <!-- Summary -->
+    <div class="summary-stats">
+
+        <h3>
+            Next Steps
+        </h3>
+
+        <p>
+            Focus on the checkpoints marked in
+            <span class="red-text">
+                red
+            </span>
+            first, then work on
+            <span class="yellow-text">
+                yellow
+            </span>
+            items to improve your resume.
+
+            Use these insights to strengthen your existing resume
+            or <strong>build a new one from scratch</strong>
+            using our resume builder.
+        </p>
+
+    </div>
+
+
+    <!-- Call To Actions -->
+    <div class="cta-row">
+
+        <a
+            href="{% url 'resume_form' %}"
+            class="btn btn-green"
+        >
+            ✏️ Build New Resume
+        </a>
+
+        <a
+            href="{% url 'home' %}"
+            class="btn btn-blue"
+        >
+            🏠 Back to Home
+        </a>
+
+    </div>
+
+</div>
+
+
+<!-- Progress Bar Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const progressBar = document.querySelector(
+            '.progress-overall-fill'
+        );
+
+        if (!progressBar) {
+            return;
+        }
+
+        const progressValue = Number(
+            progressBar.dataset.progress
+        );
+
+        if (
+            Number.isFinite(progressValue)
+            && progressValue >= 0
+            && progressValue <= 100
+        ) {
+            progressBar.style.width = progressValue + '%';
+        } else {
+            progressBar.style.width = '0%';
+        }
+
+    });
+</script>
+
+</body>
+</html>

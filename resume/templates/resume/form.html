@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Resume Builder — MyResumeBuilder</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        
+        .nav { background: rgba(255,255,255,0.95); padding: 16px 40px; display: flex; justify-content: space-between; align-items: center; border-radius: 12px; margin-bottom: 30px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
+        .nav-logo { color: #667eea; font-size: 22px; font-weight: bold; text-decoration: none; }
+        .nav-logo span { color: #f093fb; }
+        .nav-btn { padding: 10px 24px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; background: #667eea; color: white; }
+
+        .container { max-width: 900px; margin: 0 auto; }
+        
+        .header { text-align: center; color: white; margin-bottom: 36px; }
+        .header h1 { font-size: 42px; margin-bottom: 8px; }
+        .header p { font-size: 16px; opacity: 0.95; }
+
+        .section { background: white; padding: 32px; margin-bottom: 20px; border-radius: 14px; box-shadow: 0 12px 40px rgba(0,0,0,0.12); }
+        .section h2 { color: #667eea; font-size: 18px; text-transform: uppercase; letter-spacing: 1.2px; border-bottom: 3px solid #f093fb; padding-bottom: 12px; margin-bottom: 24px; }
+        
+        label { font-weight: 600; font-size: 14px; display: block; margin-top: 16px; color: #333; }
+        input[type="text"], input[type="email"], input[type="url"], textarea { 
+            width: 100%; padding: 12px; margin-top: 6px; border: 2px solid #e0e0e0; border-radius: 8px; 
+            font-size: 14px; transition: all 0.3s;
+        }
+        input:focus, textarea:focus { border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.1); outline: none; }
+        
+        .entry-block { border: 2px solid #e8d5f2; padding: 20px; border-radius: 10px; margin-bottom: 16px; background: linear-gradient(135deg, #f5f7fa 0%, #fef9fc 100%); }
+        .entry-block h3 { margin: 0 0 12px 0; font-size: 15px; color: #667eea; display: flex; justify-content: space-between; align-items: center; }
+        .remove-btn { background: none; border: none; color: #e74c3c; font-size: 14px; cursor: pointer; font-weight: bold; }
+        .remove-btn:hover { text-decoration: underline; }
+
+        .add-btn { 
+            display: flex; align-items: center; justify-content: center; gap: 8px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; 
+            cursor: pointer; border: none; font-weight: bold; width: 100%; margin-top: 8px;
+            transition: all 0.3s;
+        }
+        .add-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(102,126,234,0.4); }
+
+        button[type="submit"] { 
+            width: 100%; margin-top: 20px; padding: 16px; 
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); 
+            color: white; border: none; border-radius: 8px; 
+            font-size: 16px; font-weight: bold; cursor: pointer;
+            transition: all 0.3s;
+        }
+        button[type="submit"]:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(245,87,108,0.4); }
+
+        .hint { font-size: 12px; color: #999; margin-top: 6px; font-style: italic; }
+        .section-icon { display: inline-block; margin-right: 8px; font-size: 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="nav">
+        <a href="{% url 'home' %}" class="nav-logo">My<span>Resume</span>Builder</a>
+        <a href="{% url 'resume_form' %}" class="nav-btn">← Back</a>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>Build Your Resume</h1>
+            <p>Fill out each section below to create a professional, scored resume</p>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <!-- Personal Information -->
+            <div class="section">
+                <h2><span class="section-icon">👤</span>Personal Information</h2>
+                <label>Full Name *</label>{{ form.full_name }}
+                <label>Email *</label>{{ form.email }}
+                <label>Phone *</label>{{ form.phone }}
+                <label>Location *</label>{{ form.location }}
+                <label>LinkedIn URL</label>{{ form.linkedin }}
+                <p class="hint">Your LinkedIn profile improves your credibility with employers.</p>
+            </div>
+
+            <!-- Target Position -->
+            <div class="section">
+                <h2><span class="section-icon">🎯</span>Target Position</h2>
+                <label>Position Applying For</label>{{ form.target_position }}
+                <p class="hint">Example: Software Developer, Data Analyst, Marketing Manager. This helps personalize your score and feedback.</p>
+            </div>
+
+            <!-- Professional Summary -->
+            <div class="section">
+                <h2><span class="section-icon">📝</span>Professional Summary</h2>
+                <label>Summary</label>{{ form.summary }}
+                <p class="hint">Write 3-4 powerful sentences. Highlight your best skills and include a concrete achievement or example.</p>
+            </div>
+
+            <!-- Education -->
+            <div class="section">
+                <h2><span class="section-icon">🎓</span>Education</h2>
+                <p class="hint">At least one entry required. Click + to add more degrees or certifications.</p>
+                {{ edu_formset.management_form }}
+                <div id="edu-container">
+                    {% for edu_form in edu_formset %}
+                    <div class="entry-block">
+                        <h3>
+                            Entry {{ forloop.counter }}
+                            {% if not forloop.first %}<button type="button" class="remove-btn" onclick="removeEntry(this)">✕ Remove</button>{% endif %}
+                        </h3>
+                        <label>Degree</label>{{ edu_form.degree }}
+                        <label>Institution</label>{{ edu_form.institution }}
+                        <label>Graduation Year</label>{{ edu_form.grad_year }}
+                        <label>GPA (optional)</label>{{ edu_form.gpa }}
+                        <label>Accomplishments</label>{{ edu_form.accomplishments }}
+                        <p class="hint">List key achievements, awards, or skills learned. Example: "Dean's List, Leadership Award, Teamwork"</p>
+                        {% if edu_form.can_delete %}<div style="display:none;">{{ edu_form.DELETE }}</div>{% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                <button type="button" class="add-btn" onclick="addEntry('edu')">+ Add Another Education</button>
+            </div>
+            
+
+            <!-- Work Experience -->
+            <div class="section">
+                <h2><span class="section-icon">💼</span>Work Experience</h2>
+                <p class="hint">Add all relevant experience. Use action verbs and include numbers to boost your Impact score.</p>
+                {{ exp_formset.management_form }}
+                <div id="exp-container">
+                    {% for exp_form in exp_formset %}
+                    <div class="entry-block">
+                        <h3>
+                            Entry {{ forloop.counter }}
+                            {% if not forloop.first %}<button type="button" class="remove-btn" onclick="removeEntry(this)">✕ Remove</button>{% endif %}
+                        </h3>
+                        <label>Job Title</label>{{ exp_form.job_title }}
+                        <label>Company</label>{{ exp_form.company }}
+                        <label>Location</label>{{ exp_form.work_location }}
+                        <label>Duration</label>{{ exp_form.duration }}
+                        <label>Description</label>{{ exp_form.description }}
+                        <p class="hint">Include 2-3 bullet points about what you accomplished. Example: "Increased sales by 30% through targeted campaigns"</p>
+                        {% if exp_form.can_delete %}<div style="display:none;">{{ exp_form.DELETE }}</div>{% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                <button type="button" class="add-btn" onclick="addEntry('exp')">+ Add Another Experience</button>
+            </div>
+
+            <!-- Skills -->
+            <div class="section">
+                <h2><span class="section-icon">⚡</span>Skills</h2>
+                <label>Skills (comma-separated)</label>{{ form.skills }}
+                <p class="hint">Include 8+ skills. Mix technical skills (Python, SQL, Design) and soft skills (Leadership, Communication).</p>
+            </div>
+
+            <button type="submit">✨ Generate Resume & Score Report</button>
+        </form>
+    </div>
+
+    <script>
+        const templates = {
+            edu: `<div class="entry-block">
+                <h3>
+                    Entry __num__
+                    <button type="button" class="remove-btn" onclick="removeEntry(this)">✕ Remove</button>
+                </h3>
+                <label>Degree</label><input type="text" name="edu-__index__-degree" placeholder="B.S. Software Development">
+                <label>Institution</label><input type="text" name="edu-__index__-institution" placeholder="BYU-Pathway Worldwide">
+                <label>Graduation Year</label><input type="text" name="edu-__index__-grad_year" placeholder="2027">
+                <label>GPA (optional)</label><input type="text" name="edu-__index__-gpa" placeholder="3.84 / 4.00">
+                <input type="hidden" name="edu-__index__-id" value="">
+                <input type="hidden" name="edu-__index__-resume" value="">
+            </div>`,
+
+            exp: `<div class="entry-block">
+                <h3>
+                    Entry __num__
+                    <button type="button" class="remove-btn" onclick="removeEntry(this)">✕ Remove</button>
+                </h3>
+                <label>Job Title</label><input type="text" name="exp-__index__-job_title" placeholder="Software Developer">
+                <label>Company</label><input type="text" name="exp-__index__-company" placeholder="Tech Company">
+                <label>Location</label><input type="text" name="exp-__index__-work_location" placeholder="Lagos, Nigeria">
+                <label>Duration</label><input type="text" name="exp-__index__-duration" placeholder="Jan 2025 – Present">
+                <label>Description</label><textarea name="exp-__index__-description" rows="4" placeholder="Describe your tasks and achievements..."></textarea>
+                <input type="hidden" name="exp-__index__-id" value="">
+                <input type="hidden" name="exp-__index__-resume" value="">
+            </div>`
+        };
+
+        function addEntry(prefix) {
+            const totalInput = document.querySelector(`#id_${prefix}-TOTAL_FORMS`);
+            const currentCount = parseInt(totalInput.value);
+            const container = document.getElementById(`${prefix}-container`);
+            const entryCount = container.querySelectorAll('.entry-block').length;
+            let html = templates[prefix].replace(/__index__/g, currentCount).replace(/__num__/g, entryCount + 1);
+            container.insertAdjacentHTML('beforeend', html);
+            totalInput.value = currentCount + 1;
+        }
+
+        function removeEntry(btn) {
+            const block = btn.closest('.entry-block');
+            block.remove();
+            ['edu', 'exp'].forEach(prefix => {
+                const container = document.getElementById(`${prefix}-container`);
+                if (!container) return;
+                container.querySelectorAll('.entry-block').forEach((block, i) => {
+                    const heading = block.querySelector('h3');
+                    if (heading) heading.textContent = `Entry ${i + 1}` + (i > 0 ? `\n✕ Remove` : '');
+                });
+            });
+        }
+    </script>
+</body>
+</html>

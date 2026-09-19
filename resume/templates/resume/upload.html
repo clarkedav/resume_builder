@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload & Scan Resume — MyResumeBuilder</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f4f8; margin: 0; }
+        nav { background: #2c3e50; padding: 16px 40px; display: flex; justify-content: space-between; align-items: center; }
+        .nav-logo { color: white; font-size: 20px; font-weight: bold; text-decoration: none; }
+        .nav-logo span { color: #3498db; }
+        .nav-btn { padding: 8px 20px; border-radius: 4px; text-decoration: none; font-size: 14px; font-weight: bold; background: #3498db; color: white; }
+        .container { max-width: 700px; margin: 60px auto; padding: 0 20px; }
+        h1 { color: #2c3e50; margin-bottom: 8px; }
+        .subtitle { color: #777; margin-bottom: 36px; font-size: 16px; }
+        .card { background: white; padding: 36px; border-radius: 10px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+        label { font-weight: bold; font-size: 13px; display: block; margin-top: 20px; color: #34495e; }
+        input[type="text"], input[type="file"] { width: 100%; padding: 10px; margin-top: 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+        input[type="file"] { background: #f8f9fa; }
+        .hint { font-size: 12px; color: #888; margin-top: 5px; }
+        .upload-zone { border: 3px dashed #3498db; border-radius: 8px; padding: 36px; text-align: center; margin-top: 20px; background: #ebf5fb; }
+        .upload-icon { font-size: 40px; margin-bottom: 10px; }
+        button { margin-top: 24px; width: 100%; padding: 13px; background: #2c3e50; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; }
+        button:hover { background: #1a252f; }
+        .back-link { display: inline-block; margin-top: 20px; color: #3498db; text-decoration: none; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="{% url 'home' %}" class="nav-logo">My<span>Resume</span>Builder</a>
+        <a href="{% url 'resume_form' %}" class="nav-btn">Build Resume</a>
+    </nav>
+
+    <div class="container">
+        <h1>Upload & Scan Your Resume</h1>
+        <p class="subtitle">Upload your existing resume and receive an instant score with specific improvement suggestions.</p>
+
+        <div class="card">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <label>Position You Are Applying For (optional)</label>
+                {{ form.target_position }}
+                <p class="hint">Adding a target position helps personalize the feedback.</p>
+
+                <div class="upload-zone">
+                    <div class="upload-icon">📄</div>
+                    <p style="color:#555; margin-bottom:12px;">Select your resume file</p>
+                    {{ form.resume_file }}
+                    <p class="hint">Supported formats: .docx and .pdf</p>
+                </div>
+
+                <button type="submit">Scan My Resume</button>
+            </form>
+            <a href="{% url 'home' %}" class="back-link">← Back to Home</a>
+        </div>
+    </div>
+</body>
+</html>
