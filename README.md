@@ -11,7 +11,7 @@ Start the development server: python manage.py runserver
 Open your browser to http://127.0.0.1:8000/ to see the home page
 The application guides users through an interactive resume builder, evaluates their resume against 8 key professional standards, and generates a detailed score report with actionable recommendations. I created this to solve a real problem: most job seekers lack structured feedback on resume quality, and this tool provides that guidance while also demonstrating how to build a data-driven web application with meaningful user feedback loops.
 
-[Software Demo Video](https://youtu.be/gTP7QnfAOjA)
+[Software Demo Video](https://youtu.be/tmajSMEcq9E)
 
 Web Pages
 Home Page — The landing page introduces users to the builder and upload features. It displays call-to-action buttons for either building a new resume from scratch or uploading an existing resume for analysis. This page is dynamically generated with links to create new resume sessions.
